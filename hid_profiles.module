@@ -39,6 +39,12 @@ function hid_profiles_menu() {
     'access callback' => 'hid_profiles_ajax_contact_access',
   );
 
+  // Provide callback to get data on active operations.
+  $items['hid/operations'] = array(
+    'page callback' => 'hid_profiles_ajax_operations',
+    'access arguments' => array('access content'),
+  );
+
   // Provide callback for JSON objects of Organizations
   $items['hid/organizations/autocomplete'] = array(
     'page callback' => 'hid_organizations_autocomplete',
@@ -125,7 +131,19 @@ function hid_profiles_ajax_data() {
     'userData' => $userData,
     'placesOperations' => $placesOperations,
   );
+
   drupal_json_output($data);
+  drupal_exit();
+}
+
+/**
+ * Menu callback to return data on active operations in JSON format.
+ */
+function hid_profiles_ajax_operations() {
+  $placesOperations = hid_profiles_get_operations();
+  drupal_add_http_header('Access-Control-Allow-Origin', '*');
+  drupal_add_http_header('Access-Control-Allow-Methods', 'GET');
+  drupal_json_output($placesOperations);
   drupal_exit();
 }
 
