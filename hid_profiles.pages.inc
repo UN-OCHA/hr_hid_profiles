@@ -89,6 +89,8 @@ function hid_organizations_autocomplete($org_names) {
   }
 
   // return for JS
+  drupal_add_http_header('Access-Control-Allow-Origin', '*');
+  drupal_add_http_header('Access-Control-Allow-Methods', 'GET');
   drupal_json_output($matches);
 }
 
@@ -113,6 +115,8 @@ function hid_locations_countries() {
   }
 
   // return for JS
+  drupal_add_http_header('Access-Control-Allow-Origin', '*');
+  drupal_add_http_header('Access-Control-Allow-Methods', 'GET');
   drupal_json_output($countries);
 }
 
@@ -163,5 +167,7 @@ function hid_location_country($country) {
   }
 
   // return for JS
+  drupal_add_http_header('Access-Control-Allow-Origin', '*');
+  drupal_add_http_header('Access-Control-Allow-Methods', 'GET');
   drupal_json_output($countries);
 }
