@@ -361,17 +361,16 @@ function _hid_profiles_get_user_by_cid($cid) {
 
   $profile = hid_profiles_restclient_post($resource_path, $variables);
 
-  // TODO: Do some error checking and validation here
-  // TODO: Sort out why the data needs to be double decoded.
   if (empty($profile->data)) return array();
-  $data = json_decode(json_decode($profile->data));
+  $data = json_decode($profile->data);
   $data = (is_array($data) && !empty($data[0])) ? $data[0] : $data;
 
   return $data;
 }
 
 /**
- * Load data from the Humanitarian ID Profile API by the CID (userid).
+ * Load data from the Humanitarian ID Profile API (optionally, filtered by
+ * search terms).
  *
  * @param string $cid
  *   The value of the userid for the Humanitarian ID Profile API.
@@ -394,10 +393,8 @@ function _hid_profiles_get_contacts($terms = NULL) {
 
   $contacts = hid_profiles_restclient_post($resource_path, $variables);
 
-  // TODO: Do some error checking and validation here
-  // TODO: Sort out why the data needs to be double decoded.
   if (empty($contacts->data)) return array();
-  $data = json_decode(json_decode($contacts->data));
+  $data = json_decode($contacts->data);
   $data = (is_array($data) && !empty($data[0])) ? $data[0] : $data;
 
   return $data;
@@ -417,7 +414,7 @@ function _hid_profiles_get_cid_by_uid($uid) {
   static $uid_cid = array();
 
   if (!isset($uid_cid[$uid])) {
-    $uid_cid[$uid] = db_query("SELECT cid FROM {hid_profiles} WHERE uid = :uid ", array(':uid' => $uid))->fetchField();
+    $uid_cid[$uid] = db_query("SELECT cid FROM {hid_profiles} WHERE uid = :uid", array(':uid' => $uid))->fetchField();
   }
   
   return $uid_cid[$uid];
@@ -451,7 +448,7 @@ function _hid_profiles_save_profile($cid, $values, $uid) {
   $response = hid_profiles_restclient_post($resource_path, $variables);
 
   if ($response->code === "200") {
-    $return_data = json_decode(json_decode($response->data));
+    $return_data = json_decode($response->data);
 
     // Since we have no $cid, and that comes from the {hid_profiles} table, it's
     // safe to assume that it doesn't exist there.
@@ -476,7 +473,7 @@ function _hid_profiles_save_contact($cid, $values) {
 
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
-    $return_data = json_decode(json_decode($response->data));
+    $return_data = json_decode($response->data);
     return $return_data;
   }
   return FALSE;
