@@ -19,25 +19,25 @@ function hid_profiles_menu() {
     'access arguments' => array('administer hid_profiles'),
     'file' => 'hid_profiles.pages.inc',
   );
-  $items['user/%user/hid'] = array(
-    'title' => 'Humanitarian ID User Debug',
-    'page callback' => 'hid_profiles_user_debug',
-    'page arguments' => array(1),
-    'access arguments' => array('administer hid_profiles'),
-    'file' => 'hid_profiles.pages.inc',
-  );
-  $items['hid/data'] = array(
-    'page callback' => 'hid_profiles_ajax_data',
-    'access arguments' => array('access hid_profiles'),
-  );
-  $items['hid/profile'] = array(
-    'page callback' => 'hid_profiles_ajax_profile',
-    'access callback' => 'hid_profiles_ajax_profile_access',
-  );
-  $items['hid/contact'] = array(
-    'page callback' => 'hid_profiles_ajax_contact',
-    'access callback' => 'hid_profiles_ajax_contact_access',
-  );
+//  $items['user/%user/hid'] = array(
+//    'title' => 'Humanitarian ID User Debug',
+//    'page callback' => 'hid_profiles_user_debug',
+//    'page arguments' => array(1),
+//    'access arguments' => array('administer hid_profiles'),
+//    'file' => 'hid_profiles.pages.inc',
+//  );
+//  $items['hid/data'] = array(
+//    'page callback' => 'hid_profiles_ajax_data',
+//    'access arguments' => array('access hid_profiles'),
+//  );
+//  $items['hid/profile'] = array(
+//    'page callback' => 'hid_profiles_ajax_profile',
+//    'access callback' => 'hid_profiles_ajax_profile_access',
+//  );
+//  $items['hid/contact'] = array(
+//    'page callback' => 'hid_profiles_ajax_contact',
+//    'access callback' => 'hid_profiles_ajax_contact_access',
+//  );
 
   // Provide callback to get data on active operations.
   $items['hid/operations'] = array(
