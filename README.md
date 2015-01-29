@@ -2,7 +2,10 @@
 
 ## Requirements
 
-This module requires the `restclient` and `hid_auth` modules.
+This module requires the `restclient` module.
+
+For associating Humanitarian ID profiles with Drupal user profiles, this module
+depends on the `hid_auth` module.
 
 ## Configuration
 
