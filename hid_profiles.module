@@ -316,7 +316,7 @@ function hid_profiles_get_operations() {
       }
 
       if (!empty($op_place_name) && !empty($op_id) && !empty($op_name)) {
-        $results[check_plain($op_place_name)][$op_id] = array('name' => $op_name, 'bundles' => $bundles);
+        $results[$op_place_name][$op_id] = array('name' => $op_name, 'bundles' => $bundles);
       }
     }
   }
