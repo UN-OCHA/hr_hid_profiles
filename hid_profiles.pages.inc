@@ -73,19 +73,32 @@ function hid_organizations_autocomplete($org_names) {
   $contains = variable_get('hid_organizations_autocomplete_true', TRUE);
   $contains_delimiter = ($contains) ? '%' : '';
 
+  // Search for hr_organization taxonomy terms, where the term name or
+  // organization field value match the given search string.
   $query = db_select('taxonomy_term_data', 't');
-
-  // Select rows that match the org_name string.
-  $return = $query
+  $query->join('field_data_field_acronym', 'fdfa', 't.tid = fdfa.entity_id');
+  $query
     ->fields('t')
-    ->condition('t.name', $contains_delimiter . db_like($org_names) . '%', 'LIKE')
+    ->fields('fdfa')
     ->condition('t.vid', $vocabulary->vid)
+    ->condition('fdfa.entity_type', 'taxonomy_term');
+
+  $or = db_or();
+  $or->condition('t.name', $contains_delimiter . db_like($org_names) . '%', 'LIKE');
+  $or->condition('fdfa.field_acronym_value', $contains_delimiter . db_like($org_names) . '%', 'LIKE');
+
+  $return = $query
+    ->condition($or)
     ->range(0, $limit)
     ->execute();
 
   // add matches to $matches
   foreach ($return as $row) {
-    $matches['hrinfo_org_' . $row->tid] = check_plain($row->name);
+    $display_name = $row->name;
+    if (!empty($row->field_acronym_value)) {
+      $display_name .= ' (' . $row->field_acronym_value . ')';
+    }
+    $matches['hrinfo_org_' . $row->tid] = $display_name;
   }
 
   // return for JS
