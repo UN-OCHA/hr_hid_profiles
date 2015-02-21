@@ -199,7 +199,6 @@ function hid_profiles_local_contacts($operation) {
   $params = array(
     'locationId' => 'hrinfo:'.$operation->nid,
     'type' => 'local',
-    'status' => 1,
   );
   $response = _hid_profiles_get_contacts($params);
   if ($response != FALSE) {
