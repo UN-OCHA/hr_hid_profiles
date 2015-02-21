@@ -187,3 +187,42 @@ function hid_location_country($country) {
   drupal_json_output($countries);
   drupal_exit();
 }
+
+/**
+ * Callback function to display the list of local contacts for a node
+ *
+ * @param integer Operation Id
+ *
+ */
+function hid_profiles_local_contacts($operation) {
+  // Get contacts
+  $params = array(
+    'locationId' => 'hrinfo:'.$operation->nid,
+    'type' => 'local',
+    'status' => 1,
+  );
+  $response = _hid_profiles_get_contacts($params);
+  if ($response != FALSE) {
+    $contacts = $response->contacts;
+    if (count($contacts)) {
+      $headers = array(
+        'Clusters',
+        'First name',
+        'Last name',
+        'Email',
+        'Job Title',
+        'Organization',
+        'Location'
+      );
+      $rows = array();
+      foreach ($contacts as $contact) {
+        
+        $cell = array('', $contact->nameGiven, $contact->nameFamily, '', $contact->jobtitle, '', '');
+        $rows[] = $cell;
+      }
+      $table = array('header' => $headers, 'rows' => $rows, 'attributes' => array());
+      return theme_table($table);
+    }
+  }
+  return 'There are no contacts to display.';
+}

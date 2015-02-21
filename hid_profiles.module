@@ -19,13 +19,21 @@ function hid_profiles_menu() {
     'access arguments' => array('administer hid_profiles'),
     'file' => 'hid_profiles.pages.inc',
   );
-//  $items['user/%user/hid'] = array(
-//    'title' => 'Humanitarian ID User Debug',
-//    'page callback' => 'hid_profiles_user_debug',
-//    'page arguments' => array(1),
-//    'access arguments' => array('administer hid_profiles'),
-//    'file' => 'hid_profiles.pages.inc',
-//  );
+  $items['user/%user/hid'] = array(
+    'title' => 'Humanitarian ID User Debug',
+    'page callback' => 'hid_profiles_user_debug',
+    'page arguments' => array(1),
+    'access arguments' => array('administer hid_profiles'),
+    'file' => 'hid_profiles.pages.inc',
+  );
+
+  $items['node/%node/hid_contacts'] = array(
+    'title' => 'Contacts',
+    'page callback' => 'hid_profiles_local_contacts',
+    'page arguments' => array(1),
+    'access arguments' => array('access hid_profiles'),
+    'file' => 'hid_profiles.pages.inc',
+  );
 //  $items['hid/data'] = array(
 //    'page callback' => 'hid_profiles_ajax_data',
 //    'access arguments' => array('access hid_profiles'),
@@ -435,7 +443,7 @@ function _hid_profiles_get_cid_by_uid($uid) {
  *    table (hid_profiles) along with this UID.
  */
 function _hid_profiles_save_profile($cid, $values, $uid) {
-  $resource_path = 'v0/profile/save/%cid';
+  $resource_path = 'v0/profile/save';
 
   if (empty($cid)) {
     // TODO: Insert cid into our user mapping table
@@ -443,7 +451,8 @@ function _hid_profiles_save_profile($cid, $values, $uid) {
     unset($values['userid']);
   }
 
-  $variables = array('parameters' => array('%cid' => $cid), 'query' => $values);
+  $query = array('userid' => $cid);
+  $variables = array('query' => $query, 'body' => drupal_json_encode($values));
 
   $response = hid_profiles_restclient_post($resource_path, $variables);
 
@@ -467,9 +476,11 @@ function _hid_profiles_save_profile($cid, $values, $uid) {
  * Helper function for saving a contact record.
  */
 function _hid_profiles_save_contact($cid, $values) {
-  $resource_path = 'v0/contact/save/%cid';
+  $resource_path = 'v0/contact/save';
 
-  $variables = array('parameters' => array('%cid' => $cid), 'query' => $values);
+  $query = array('userid' => $cid);
+  $values['userid'] = $cid;
+  $variables = array('query' => $query, 'body' => json_encode($values));
 
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
