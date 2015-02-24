@@ -45,51 +45,6 @@ Drupal.behaviors.hidProfilesContacts = {
         limit: 5,
         skip: 0,
     });
-    
-    ContactTableView = Backbone.View.extend({
-        
-        numItems: 10,
-        currentPage: 1,
-        
-        initialize: function() {
-            this.contactsList = new ContactList;
-            this.contactsList.limit = this.numItems;
-        },
-
-        loadResults: function() {
-          this.contactsList.fetch({ 
-            success: function (contacts) {
-              var template = _.template($('#contacts_list_table_row').html());
-              $("#contacts-list-table tbody").append(template({contacts: contacts.models}));
-            },
-          });
-        },
-
-        show: function() {
-          this.$el.show();
-        },
-
-        hide: function() {
-          this.$el.hide();
-        },
-          
-        clear: function() {
-          $("#contacts-list-table tbody").empty();
-        },
-
-        page: function(page) {
-          this.currentPage = page;
-          this.clear();
-          this.contactsList.skip = this.numItems * (page - 1);
-          var nextPage = parseInt(page) + 1;
-          var previousPage = parseInt(page) - 1;
-          $('#next').attr('href', '#table/' + nextPage);
-          if (previousPage > 0) {
-            $('#previous').attr('href', '#table/' + previousPage);
-          }
-          this.loadResults();
-        },
-    });
 
     ContactView = Backbone.View.extend({
       show: function() {
@@ -100,6 +55,58 @@ Drupal.behaviors.hidProfilesContacts = {
         this.$el.hide();
       },
 
+      clear: function() {
+        this.$el.empty();
+      },
+
+      loading: function() {
+        this.hide();
+        $('#loading').show();
+      },
+
+      finishedLoading: function() {
+        $('#loading').hide();
+        this.show();
+      },
+
+    });
+    
+    ContactTableView = ContactView.extend({
+        
+        numItems: 10,
+        currentPage: 1,
+        
+        initialize: function() {
+            this.contactsList = new ContactList;
+            this.contactsList.limit = this.numItems;
+        },
+
+        loadResults: function() {
+          var that = this;
+          this.contactsList.fetch({ 
+            success: function (contacts) {
+              var template = _.template($('#contacts_list_table_row').html());
+              $('#contacts-list-table tbody').append(template({contacts: contacts.models}));
+              that.finishedLoading();
+            },
+          });
+        },
+
+        page: function(page) {
+          this.loading();
+          this.currentPage = page;
+          this.clear();
+          this.contactsList.skip = this.numItems * (page - 1);
+          this.loadResults();
+        },
+
+        clear: function() {
+          $('#contacts-list-table tbody').empty();
+        },
+
+    });
+
+    ContactItemView = ContactView.extend({
       render: function (model) {
         var template = _.template($('#contacts_view').html());
         this.$el.html(template({contact: model}));
@@ -113,8 +120,8 @@ Drupal.behaviors.hidProfilesContacts = {
         "*actions": "defaultRoute",
       },
 
-      tableView: new ContactTableView({el: '#contacts-list', id: 'contacts-list'}),
-      contactView: new ContactView({el: '#contacts-view', id: 'contacts-view'}),
+      tableView: new ContactTableView({el: '#contacts-list'}),
+      contactView: new ContactItemView({el: '#contacts-view'}),
 
       defaultRoute: function (actions) {
         this.navigate('table/1', {trigger: true});
@@ -123,17 +130,26 @@ Drupal.behaviors.hidProfilesContacts = {
       table: function(page) {
         this.contactView.hide();
         this.tableView.show();
+        var nextPage = parseInt(page) + 1;
+        var previousPage = parseInt(page) - 1;
+        $('#next').attr('href', '#table/' + nextPage);
+        if (previousPage > 0) {
+          $('#previous').attr('href', '#table/' + previousPage);
+        }
         this.tableView.page(page);
       },
 
       contact: function(id) {
+        this.contactView.loading();
         var that = this;
         this.tableView.hide();
-        this.contactView.show();
+        this.contactView.clear();
         var contact = new Contact({_id: id});
         contact.fetch({
           success: function(contact) {
+            that.contactView.clear();
             that.contactView.render(contact);
+            that.contactView.finishedLoading();
           },
         });
       },

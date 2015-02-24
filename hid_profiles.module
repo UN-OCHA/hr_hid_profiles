@@ -100,8 +100,10 @@ function hid_profiles_permission() {
   );
 }
 
+/**
+ * Callback function to proxy the HID API
+ */
 function hid_profiles_proxy() {
-  drupal_add_http_header('Access-control-allow-origin', '*');
   $query = $_GET;
   unset($query['q']);
   $resource_path = $_GET['api_path'];
@@ -114,6 +116,16 @@ function hid_profiles_proxy() {
   }
   drupal_exit();
 }
+
+/**
+ * Implements hook_ctools_plugin_directory()
+ */
+function hid_profiles_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && $plugin == 'content_types') {
+    return 'plugins/' . $plugin;
+  }
+}
+
 
 /**
  * Implements hook_user_login().

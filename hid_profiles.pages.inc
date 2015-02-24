@@ -25,6 +25,13 @@ function hid_profiles_user_debug($user) {
  * Admin form for managing the system variables associated with this module.
  */
 function hid_profiles_settings_form($form, &$form_state) {
+  $form['hid_profiles_app_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('HID App URL'),
+    '#description' => t('The base URL of the Humanitarian ID application.'),
+    '#default_value' => variable_get('hid_profiles_app_url', NULL),
+    '#required' => TRUE,
+  );
   $form['hid_profiles_api_endpoint'] = array(
     '#type' => 'textfield',
     '#title' => t('API endpoint'),
@@ -249,7 +256,8 @@ function hid_profiles_local_contacts($operation) {
       <li class="pager-next"> <a id="next" href="">Next</a></li>
     </ul>
   </div>
-</div>';
+</div>
+<div id="loading"><p class="text-center lead"><i class="fa fa-spinner fa-pulse"></i> Please wait. Data is loading...</p></div>';
 
   return $html;
 }
