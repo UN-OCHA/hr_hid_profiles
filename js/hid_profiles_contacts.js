@@ -3,7 +3,7 @@ Drupal.behaviors.hidProfilesContacts = {
   attach: function (context, settings) {
     Contact = Backbone.Model.extend({
       url: function() {
-        return 'http://www.hrinfo.vm/hid/proxy?api_path=v0/contact/view&_id='+this.get('_id');
+        return window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&_id='+this.get('_id');
       },
       parse: function(response) {
         if (response.contacts != undefined) {
@@ -37,7 +37,7 @@ Drupal.behaviors.hidProfilesContacts = {
     ContactList = Backbone.Collection.extend({
         model: Contact,
         url: function() {
-          return 'http://www.hrinfo.vm/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
+          return window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
         },
         parse: function(response) {
            return response.contacts;
