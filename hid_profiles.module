@@ -76,6 +76,11 @@ function hid_profiles_menu() {
     'file' => 'hid_profiles.pages.inc',
   );
 
+  $items['hid/proxy'] = array(
+    'page callback' => 'hid_profiles_proxy',
+    'access arguments' => array('access content'),
+  );
+
   return $items;
 }
 
@@ -93,6 +98,21 @@ function hid_profiles_permission() {
       'description' => t('Administer Humanitarian ID profile API configuration and access debugging pages.'),
     ),
   );
+}
+
+function hid_profiles_proxy() {
+  drupal_add_http_header('Access-control-allow-origin', '*');
+  $query = $_GET;
+  unset($query['q']);
+  $resource_path = $_GET['api_path'];
+  unset($_GET['api_path']);
+  $variables['query'] = $_GET;
+  $response = hid_profiles_restclient_post($resource_path, $variables);
+  if ($response->code === "200") {
+    $return_data = json_decode($response->data);
+    echo $response->data;
+  }
+  drupal_exit();
 }
 
 /**
@@ -400,12 +420,12 @@ function _hid_profiles_get_contacts($terms = NULL) {
   );
 
   $contacts = hid_profiles_restclient_post($resource_path, $variables);
-
-  if (empty($contacts->data)) return array();
+  return $contacts;
+  /*if (empty($contacts->data)) return array();
   $data = json_decode($contacts->data);
   $data = (is_array($data) && !empty($data[0])) ? $data[0] : $data;
 
-  return $data;
+  return $data;*/
 }
 
 /**

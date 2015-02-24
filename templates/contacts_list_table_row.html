@@ -1,0 +1,14 @@
+<% _.each(contacts, function(contact) { %>
+    <tr>
+      <td><%= contact.getBundles() %></td>
+      <td><a href="#contact/<%= contact.get('_id') %>"><%= contact.get('nameGiven') %></a></td>
+      <td><a href="#contact/<%= contact.get('_id') %>"><%= contact.get('nameFamily') %></a></td>
+      <td><ul><% _.each(contact.get('email'), function(email) { %>
+         <li><%= email.type %> : <%= email.address %></li>
+      <% }); %>
+      </td>
+      <td><%= contact.get('jobtitle') %></td>
+      <td><%= contact.getMainOrganizationName() %></td>
+      <td><%= contact.getLocationName() %></td>
+    </tr>
+  <% }); %>

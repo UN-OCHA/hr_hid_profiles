@@ -195,33 +195,61 @@ function hid_location_country($country) {
  *
  */
 function hid_profiles_local_contacts($operation) {
-  // Get contacts
-  $params = array(
-    'locationId' => 'hrinfo:'.$operation->nid,
-    'type' => 'local',
+  context_set('context', 'hr_space_menu', FALSE);
+  drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js', array('type' => 'external'));
+  drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js', array('type' => 'external'));
+  $table_row =  DRUPAL_ROOT . '/' . drupal_get_path('module', 'hid_profiles') . "/templates/contacts_list_table_row.html";
+  $table_row = file_get_contents($table_row);
+  $table_row_elt = array(
+    '#tag' => 'script',
+    '#attributes' => array(
+      'type' => 'text/template',
+      'id' => 'contacts_list_table_row',
+    ),
+    '#value' => $table_row,
   );
-  $response = _hid_profiles_get_contacts($params);
-  if ($response != FALSE) {
-    $contacts = $response->contacts;
-    if (count($contacts)) {
-      $headers = array(
-        'Clusters',
-        'First name',
-        'Last name',
-        'Email',
-        'Job Title',
-        'Organization',
-        'Location'
-      );
-      $rows = array();
-      foreach ($contacts as $contact) {
-        
-        $cell = array('', $contact->nameGiven, $contact->nameFamily, '', $contact->jobtitle, '', '');
-        $rows[] = $cell;
-      }
-      $table = array('header' => $headers, 'rows' => $rows, 'attributes' => array());
-      return theme_table($table);
-    }
-  }
-  return 'There are no contacts to display.';
+  drupal_add_html_head($table_row_elt, 'hid_profiles_table_row');
+
+  $view =  DRUPAL_ROOT . '/' . drupal_get_path('module', 'hid_profiles') . "/templates/contacts_view.html";
+  $view = file_get_contents($view);
+  $view_elt = array(
+    '#tag' => 'script',
+    '#attributes' => array(
+      'type' => 'text/template',
+      'id' => 'contacts_view',
+    ),
+    '#value' => $view,
+  );
+  drupal_add_html_head($view_elt, 'hid_profiles_contacts_view');
+
+  drupal_add_js(drupal_get_path('module', 'hid_profiles') . '/js/hid_profiles_contacts.js');
+  drupal_add_js(array('hid_profiles' => array('operation_id' => $operation->nid)), 'setting');
+
+  $html = '<div id="contacts-view">
+</div>
+<div id="contacts-list">
+  <table id="contacts-list-table" class="table table-striped">
+    <thead>
+    <tr>
+      <th>Clusters</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th>Job Title</th>
+      <th>Organization</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <div class="text-center">
+    <ul class="pagination">
+      <li class="pager-previous"><a id="previous" href="">Previous</a></li>
+      <li class="pager-next"> <a id="next" href="">Next</a></li>
+    </ul>
+  </div>
+</div>';
+
+  return $html;
 }
