@@ -128,16 +128,15 @@ Drupal.behaviors.hidProfilesContacts = {
         },
 
         filterByProtectedRoles: function(event) {
-          this.router.navigate('table/1?protectedRoles=' + event.target.value, {trigger: true});
+          this.router.navigate('table/1?protectedRoles=' + $('#protectedRoles').val(), {trigger: true});
         },
 
         filterByBundles: function(event) {
-          console.log(event);
-          this.router.navigate('table/1?bundle='+event.target.value, {trigger: true});
+          this.router.navigate('table/1?bundle=' + $('#bundles').val(), {trigger: true});
         },
 
         search: function(event) {
-          if (event.srcElement.id == 'search' && event.keyCode == 13 || event.srcElement.id == 'search-button') {
+          if (event.type == 'keyup' && event.keyCode == 13 || event.type == 'click') {
             this.router.navigate('table/1?text='+$('#search').val(), {trigger: true});
           }
         },
