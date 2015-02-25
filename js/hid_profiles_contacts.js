@@ -37,7 +37,13 @@ Drupal.behaviors.hidProfilesContacts = {
     ContactList = Backbone.Collection.extend({
         model: Contact,
         url: function() {
-          return window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
+          var index = window.location.hash.indexOf('?');
+          var url = window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
+          if (index != -1) {
+            var params = window.location.hash.substr(index + 1);
+            url += '&' + params;
+          }
+          return url;
         },
         parse: function(response) {
            return response.contacts;
@@ -47,6 +53,8 @@ Drupal.behaviors.hidProfilesContacts = {
     });
 
     ContactView = Backbone.View.extend({
+      router: null,
+
       show: function() {
         this.$el.show();
       },
@@ -92,6 +100,13 @@ Drupal.behaviors.hidProfilesContacts = {
           });
         },
 
+        events: {
+          'change #protectedRoles': 'filterByProtectedRoles',
+          'change #bundles': 'filterByBundles',
+          'click #search-button': 'search',
+          'keyup #search': 'search',
+        },
+
         page: function(page) {
           this.loading();
           this.currentPage = page;
@@ -102,6 +117,29 @@ Drupal.behaviors.hidProfilesContacts = {
 
         clear: function() {
           $('#contacts-list-table tbody').empty();
+        },
+
+        show: function() {
+          $('#contacts-list').show();
+        },
+
+        hide: function() {
+          $('#contacts-list').hide();
+        },
+
+        filterByProtectedRoles: function(event) {
+          this.router.navigate('table/1?protectedRoles=' + event.target.value, {trigger: true});
+        },
+
+        filterByBundles: function(event) {
+          console.log(event);
+          this.router.navigate('table/1?bundle='+event.target.value, {trigger: true});
+        },
+
+        search: function(event) {
+          if (event.srcElement.id == 'search' && event.keyCode == 13 || event.srcElement.id == 'search-button') {
+            this.router.navigate('table/1?text='+$('#search').val(), {trigger: true});
+          }
         },
 
     });
@@ -120,8 +158,13 @@ Drupal.behaviors.hidProfilesContacts = {
         "*actions": "defaultRoute",
       },
 
-      tableView: new ContactTableView({el: '#contacts-list'}),
+      tableView: new ContactTableView({el: 'body'}),
       contactView: new ContactItemView({el: '#contacts-view'}),
+
+      initialize: function() {
+        this.tableView.router = this;
+        this.contactView.router = this;
+      },
 
       defaultRoute: function (actions) {
         this.navigate('table/1', {trigger: true});

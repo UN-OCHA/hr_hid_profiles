@@ -568,3 +568,81 @@ function hrinfo_country_load($country_id) {
   $country_id = str_replace('hrinfo_loc_', '', $country_id);
   return taxonomy_term_load($country_id);
 }
+
+function hid_profiles_block_info() {
+  $blocks['hid_profiles_search'] = array(
+    'info' => t('HID Profiles search'),
+  );
+  $blocks['hid_profiles_filters'] = array(
+    'info' => t('HID Profiles filters'),
+  );
+  return $blocks;
+}
+
+function hid_profiles_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'hid_profiles_search':
+      $block['content'] = '<div><div class="views-exposed-form">
+  <div class="views-exposed-widgets clearfix">
+                <div id="edit-search-wrapper" class="views-exposed-widget form-group">
+        <div class="input-group">
+          <input class="form-control form-text" id="search" name="text" value="" size="30" maxlength="128" type="text" placeholder="Search Contacts">
+          <span class="input-group-btn">
+            <button id="search-button" type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+      </div>
+      </div>
+</div>  </div>';
+      break;
+    case 'hid_profiles_filters':
+      $block['content'] = '<div id="block-current-search-hr-current-search" class="block block-current-search">
+
+    <h2>Current search</h2>
+  
+  <div class="content">
+    <div class="current-search-item current-search-item-text current-search-item-results"><div class="current-search-filter">Filter: <span class="facetapi-active">216 items</span> displayed</div></div><div class="current-search-item current-search-item-text current-search-item-reset"><div class="current-reset-filter"><a href="/'.drupal_get_path_alias(current_path()).'"><i class="reset"></i></a> Reset all filters</div></div>  </div>
+</div>';
+      $block['content'] .= hid_profiles_protected_roles_select();
+      $block['content'] .= hid_profiles_bundles_select(arg(1));
+      break;
+  }
+  return $block;
+}
+
+function hid_profiles_protected_roles_select() {
+  $voc = taxonomy_vocabulary_machine_name_load('hr_functional_role');
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'taxonomy_term')
+                    ->propertyCondition('vid', $voc->vid)
+                    ->execute();
+  $terms = taxonomy_term_load_multiple(array_keys($entities['taxonomy_term']));
+  $labels = array();
+  $html = '<select id="protectedRoles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Role">';
+  $html .= '<option value=""></option>';
+  foreach ($terms as $term) {
+    $label = entity_label('taxonomy_term', $term);
+    $html .= '<option value="'.$term->tid.'">'.$label.'</option>';
+  }
+  $html .= '</select>';
+  return $html;
+}
+
+function hid_profiles_bundles_select($operation) {
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'hr_bundle')
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $operation, '=')
+    ->execute();
+  $nodes = node_load_multiple(array_keys($entities['node']));
+  $html = '<select id="bundles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Group">';
+  $html .= '<option value=""></option>';
+  foreach ($nodes as $node) {
+    $label = entity_label('node', $node);
+    $html .= '<option value="'.$label.'">'.$label.'</option>';
+  }
+  $html .= '</select>';
+  return $html;
+}
+

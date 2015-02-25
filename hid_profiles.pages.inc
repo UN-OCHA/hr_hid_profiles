@@ -195,6 +195,20 @@ function hid_location_country($country) {
   drupal_exit();
 }
 
+function hid_profiles_load_template($file, $id) {
+  $template =  DRUPAL_ROOT . '/' . drupal_get_path('module', 'hid_profiles') . '/templates/'.$file.'.html';
+  $template = file_get_contents($template);
+  $template_elt = array(
+    '#tag' => 'script',
+    '#attributes' => array(
+      'type' => 'text/template',
+      'id' => $id,
+    ),
+    '#value' => $template,
+  );
+  drupal_add_html_head($template_elt, 'hid_profiles_'.$file);
+}
+
 /**
  * Callback function to display the list of local contacts for a node
  *
@@ -202,32 +216,17 @@ function hid_location_country($country) {
  *
  */
 function hid_profiles_local_contacts($operation) {
+  $templates = array(
+    'contacts_list_table_row',
+    'contacts_view',
+  );
   context_set('context', 'hr_space_menu', FALSE);
   drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js', array('type' => 'external'));
   drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js', array('type' => 'external'));
-  $table_row =  DRUPAL_ROOT . '/' . drupal_get_path('module', 'hid_profiles') . "/templates/contacts_list_table_row.html";
-  $table_row = file_get_contents($table_row);
-  $table_row_elt = array(
-    '#tag' => 'script',
-    '#attributes' => array(
-      'type' => 'text/template',
-      'id' => 'contacts_list_table_row',
-    ),
-    '#value' => $table_row,
-  );
-  drupal_add_html_head($table_row_elt, 'hid_profiles_table_row');
-
-  $view =  DRUPAL_ROOT . '/' . drupal_get_path('module', 'hid_profiles') . "/templates/contacts_view.html";
-  $view = file_get_contents($view);
-  $view_elt = array(
-    '#tag' => 'script',
-    '#attributes' => array(
-      'type' => 'text/template',
-      'id' => 'contacts_view',
-    ),
-    '#value' => $view,
-  );
-  drupal_add_html_head($view_elt, 'hid_profiles_contacts_view');
+  drupal_add_library('chosen', 'drupal.chosen');
+  foreach ($templates as $template) {
+    hid_profiles_load_template($template, $template);
+  }
 
   drupal_add_js(drupal_get_path('module', 'hid_profiles') . '/js/hid_profiles_contacts.js');
   drupal_add_js(array('hid_profiles' => array('operation_id' => $operation->nid)), 'setting');
