@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the Humanitarian ID Profiles Integration feature.
+ */
+
+include_once 'hid_profiles.features.inc';
 
 /**
  * @file hid_profiles.module
