@@ -83,12 +83,11 @@ function hid_organizations_autocomplete($org_names) {
   // Search for hr_organization taxonomy terms, where the term name or
   // organization field value match the given search string.
   $query = db_select('taxonomy_term_data', 't');
-  $query->join('field_data_field_acronym', 'fdfa', 't.tid = fdfa.entity_id');
+  $query->leftJoin('field_data_field_acronym', 'fdfa', '(t.tid = fdfa.entity_id AND fdfa.entity_type = :fdfa_type)', array(':fdfa_type' => 'taxonomy_term'));
   $query
     ->fields('t')
     ->fields('fdfa')
-    ->condition('t.vid', $vocabulary->vid)
-    ->condition('fdfa.entity_type', 'taxonomy_term');
+    ->condition('t.vid', $vocabulary->vid);
 
   $or = db_or();
   $or->condition('t.name', $contains_delimiter . db_like($org_names) . '%', 'LIKE');
