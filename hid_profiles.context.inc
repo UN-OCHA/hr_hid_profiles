@@ -32,11 +32,23 @@ function hid_profiles_context_default_contexts() {
           'region' => 'branding',
           'weight' => '-10',
         ),
+        'hid_profiles-hid_profiles_sidebar' => array(
+          'module' => 'hid_profiles',
+          'delta' => 'hid_profiles_sidebar',
+          'region' => 'sidebar_first',
+          'weight' => '-20',
+        ),
         'hid_profiles-hid_profiles_filters' => array(
           'module' => 'hid_profiles',
           'delta' => 'hid_profiles_filters',
           'region' => 'sidebar_first',
           'weight' => '-10',
+        ),
+        'hid_profiles-hid_profiles_powered_by' => array(
+          'module' => 'hid_profiles',
+          'delta' => 'hid_profiles_powered_by',
+          'region' => 'sidebar_first',
+          'weight' => '0',
         ),
       ),
     ),

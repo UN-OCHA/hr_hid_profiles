@@ -237,8 +237,7 @@ function hid_profiles_local_contacts($operation) {
     <thead>
     <tr>
       <th>Clusters</th>
-      <th>First name</th>
-      <th>Last name</th>
+      <th>Name</th>
       <th>Email</th>
       <th>Job Title</th>
       <th>Organization</th>

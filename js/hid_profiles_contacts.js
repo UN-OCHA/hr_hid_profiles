@@ -13,6 +13,10 @@ Drupal.behaviors.hidProfilesContacts = {
           return response;
         }
       },
+      getFullName: function() {
+        return this.get('nameGiven') + ' ' + this.get('nameFamily');
+      },
+
       getMainOrganizationName: function() {
         var organizations = this.get('organization');
         if (organizations.length > 0) {
@@ -30,6 +34,17 @@ Drupal.behaviors.hidProfilesContacts = {
         var bundles = this.get('bundle');
         if (bundles.length > 0) {
           return bundles.join(", ");
+        }
+      },
+
+      getEmails: function() {
+        var emails = this.get('email');
+        if (emails.length > 0) {
+          var addresses = new Array();
+          _.each(emails, function(email) {
+            addresses.push(email.address);
+          });
+          return addresses.join(", ");
         }
       },
     });
@@ -54,14 +69,6 @@ Drupal.behaviors.hidProfilesContacts = {
 
     ContactView = Backbone.View.extend({
       router: null,
-
-      show: function() {
-        this.$el.show();
-      },
-
-      hide: function() {
-        this.$el.hide();
-      },
 
       clear: function() {
         this.$el.empty();
@@ -105,6 +112,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'change #bundles': 'filterByBundles',
           'click #search-button': 'search',
           'keyup #search': 'search',
+          'click #back': 'back',
         },
 
         page: function(page) {
@@ -121,10 +129,12 @@ Drupal.behaviors.hidProfilesContacts = {
 
         show: function() {
           $('#contacts-list').show();
+          $('#block-hid-profiles-hid-profiles-filters').show();
         },
 
         hide: function() {
           $('#contacts-list').hide();
+          $('#block-hid-profiles-hid-profiles-filters').hide();
         },
 
         filterByProtectedRoles: function(event) {
@@ -141,12 +151,24 @@ Drupal.behaviors.hidProfilesContacts = {
           }
         },
 
+        back: function(event) {
+          history.back();
+        },
+
     });
 
     ContactItemView = ContactView.extend({
       render: function (model) {
         var template = _.template($('#contacts_view').html());
         this.$el.html(template({contact: model}));
+      },
+      show: function() {
+        this.$el.show();
+        $('#block-hid-profiles-hid-profiles-sidebar').show();
+      },
+      hide: function() {
+        this.$el.hide();
+        $('#block-hid-profiles-hid-profiles-sidebar').hide();
       },
     });
 
@@ -171,7 +193,6 @@ Drupal.behaviors.hidProfilesContacts = {
 
       table: function(page) {
         this.contactView.hide();
-        this.tableView.show();
         var nextPage = parseInt(page) + 1;
         var previousPage = parseInt(page) - 1;
         $('#next').attr('href', '#table/' + nextPage);
