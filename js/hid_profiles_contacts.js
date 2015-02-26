@@ -113,6 +113,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'click #search-button': 'search',
           'keyup #search': 'search',
           'click #back': 'back',
+          'autocompleteselect #organizations': 'filterByOrganization',
         },
 
         page: function(page) {
@@ -143,6 +144,10 @@ Drupal.behaviors.hidProfilesContacts = {
 
         filterByBundles: function(event) {
           this.router.navigate('table/1?bundle=' + $('#bundles').val(), {trigger: true});
+        },
+
+        filterByOrganization: function(event, ui) {
+          this.router.navigate('table/1?organization.name=' + ui.item.label, {trigger: true});
         },
 
         search: function(event) {
@@ -219,6 +224,24 @@ Drupal.behaviors.hidProfilesContacts = {
     });
 
     var contact_router = new ContactRouter;
+
+    // Autocomplete for organization
+    $('#organizations').autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          url: "/hid/organizations/autocomplete/"+request.term,
+          dataType: "json",
+          success: function( data ) {
+            var orgs = new Array();
+            _.each(data, function(element, index) {
+              orgs.push({'label': element, 'value': element});
+            });
+            response( orgs );
+          }
+        });
+      },
+    });
+        
 
     Backbone.history.start();
 

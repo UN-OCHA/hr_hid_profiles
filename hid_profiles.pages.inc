@@ -223,6 +223,7 @@ function hid_profiles_local_contacts($operation) {
   drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js', array('type' => 'external'));
   drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js', array('type' => 'external'));
   drupal_add_library('chosen', 'drupal.chosen');
+  drupal_add_library('system', 'ui.autocomplete');
   foreach ($templates as $template) {
     hid_profiles_load_template($template, $template);
   }

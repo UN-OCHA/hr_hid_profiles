@@ -115,6 +115,9 @@ function hid_profiles_proxy() {
   $resource_path = $_GET['api_path'];
   unset($_GET['api_path']);
   $variables['query'] = $_GET;
+  if (isset($variables['query']['organization_name'])) {
+    $variables['query']['organization.name'] = $variables['query']['organization_name'];
+  }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
     $return_data = json_decode($response->data);
@@ -618,6 +621,7 @@ function hid_profiles_block_view($delta = '') {
 </div>';
       $block['content'] .= hid_profiles_protected_roles_select();
       $block['content'] .= hid_profiles_bundles_select(arg(1));
+      $block['content'] .= hid_profiles_organization_autocomplete();
       break;
     case 'hid_profiles_sidebar':
       $block['content'] = '<button class="btn btn-primary btn-lg btn-block" id="back"><i class="fa fa-arrow-circle-left"></i> Back</button>';
@@ -661,6 +665,11 @@ function hid_profiles_bundles_select($operation) {
     $html .= '<option value="'.$label.'">'.$label.'</option>';
   }
   $html .= '</select>';
+  return $html;
+}
+
+function hid_profiles_organization_autocomplete() {
+  $html = '<input type="text" id="organizations" class="form-control" name="organization.name" value="" placeholder="Filter by Organization" />';
   return $html;
 }
 
