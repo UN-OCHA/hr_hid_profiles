@@ -51,6 +51,8 @@ Drupal.behaviors.hidProfilesContacts = {
 
     ContactList = Backbone.Collection.extend({
         model: Contact,
+        params: { },
+
         url: function() {
           var index = window.location.hash.indexOf('?');
           var url = window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
@@ -114,6 +116,8 @@ Drupal.behaviors.hidProfilesContacts = {
           'keyup #search': 'search',
           'click #back': 'back',
           'autocompleteselect #organizations': 'filterByOrganization',
+          'click #key-contact': 'filterByKeyContact',
+          'click #status': 'filterByStatus',
         },
 
         page: function(page) {
@@ -139,15 +143,56 @@ Drupal.behaviors.hidProfilesContacts = {
         },
 
         filterByProtectedRoles: function(event) {
-          this.router.navigate('table/1?protectedRoles=' + $('#protectedRoles').val(), {trigger: true});
+          var val = $('#protectedRoles').val();
+          if (val != '') {
+            this.contactsList.params.protectedRoles = val;
+          }
+          else {
+            delete this.contactsList.params.protectedRoles;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
         },
 
         filterByBundles: function(event) {
-          this.router.navigate('table/1?bundle=' + $('#bundles').val(), {trigger: true});
+          var val = $('#bundles').val();
+          if (val != '') {
+            this.contactsList.params.bundle = val;
+          }
+          else {
+            delete this.contactsList.params.bundle;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
         },
 
         filterByOrganization: function(event, ui) {
-          this.router.navigate('table/1?organization.name=' + ui.item.label, {trigger: true});
+          var val = ui.item.label;
+          if (val != '') {
+            this.contactsList.params.organization_name = val;
+          }
+          else {
+            delete this.contactsList.params.organization_name;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+
+        filterByKeyContact: function(event) {
+          if ($('#key-contact').prop('checked') == true) {
+            this.contactsList.params.keyContact = true;
+          }
+          else {
+            delete this.contactsList.params.keyContact;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+ 
+        filterByStatus: function(event) {
+          if ($('#status').prop('checked') == true) {
+            this.contactsList.params.status = true;
+          }
+          else {
+            delete this.contactsList.params.status;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
         },
 
         search: function(event) {
@@ -221,6 +266,11 @@ Drupal.behaviors.hidProfilesContacts = {
           },
         });
       },
+
+      navigateWithParams: function(url, params) {
+        console.log(params);
+        this.navigate(url + '?' + $.param(params), {trigger: true});
+      },
     });
 
     var contact_router = new ContactRouter;
@@ -241,6 +291,9 @@ Drupal.behaviors.hidProfilesContacts = {
         });
       },
     });
+
+    // Chosen configuration
+    $('select').chosen({allow_single_deselect: true});
         
 
     Backbone.history.start();

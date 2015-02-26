@@ -622,6 +622,8 @@ function hid_profiles_block_view($delta = '') {
       $block['content'] .= hid_profiles_protected_roles_select();
       $block['content'] .= hid_profiles_bundles_select(arg(1));
       $block['content'] .= hid_profiles_organization_autocomplete();
+      $block['content'] .= '<hr /><div style="font-size: 14px;" class="block"><span title="Key Contact" class="hid-key-contact">*</span> Key Contact <input type="checkbox" id="key-contact" name="keyContact" /> <br />';
+      $block['content'] .= '<span title="Verified"><i class="fa fa-check-circle fa-lg"></i></span> Verified User <input type="checkbox" id="status" name="status" /><hr />';
       break;
     case 'hid_profiles_sidebar':
       $block['content'] = '<button class="btn btn-primary btn-lg btn-block" id="back"><i class="fa fa-arrow-circle-left"></i> Back</button>';
@@ -641,13 +643,13 @@ function hid_profiles_protected_roles_select() {
                     ->execute();
   $terms = taxonomy_term_load_multiple(array_keys($entities['taxonomy_term']));
   $labels = array();
-  $html = '<select id="protectedRoles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Role">';
+  $html = '<div id="block-hid-profiles-filters-roles" class="block"><select id="protectedRoles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Role">';
   $html .= '<option value=""></option>';
   foreach ($terms as $term) {
     $label = entity_label('taxonomy_term', $term);
     $html .= '<option value="'.$term->tid.'">'.$label.'</option>';
   }
-  $html .= '</select>';
+  $html .= '</select></div>';
   return $html;
 }
 
@@ -658,18 +660,18 @@ function hid_profiles_bundles_select($operation) {
     ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $operation, '=')
     ->execute();
   $nodes = node_load_multiple(array_keys($entities['node']));
-  $html = '<select id="bundles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Group">';
+  $html = '<div id="block-hid-profiles-filters-bundles" class="block"><select id="bundles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Group">';
   $html .= '<option value=""></option>';
   foreach ($nodes as $node) {
     $label = entity_label('node', $node);
     $html .= '<option value="'.$label.'">'.$label.'</option>';
   }
-  $html .= '</select>';
+  $html .= '</select></div>';
   return $html;
 }
 
 function hid_profiles_organization_autocomplete() {
-  $html = '<input type="text" id="organizations" class="form-control" name="organization.name" value="" placeholder="Filter by Organization" />';
+  $html = '<div id="block-hid-profiles-filters-organization" class="block"><input type="text" id="organizations" class="form-control" name="organization.name" value="" placeholder="Filter by Organization" /></div>';
   return $html;
 }
 
