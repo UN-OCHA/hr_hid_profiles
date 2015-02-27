@@ -54,7 +54,7 @@ function hid_profiles_checkins_render($subtype, $conf, $panel_args, $context = N
     if (!empty($data->contacts)) {
       $locals = array();
       foreach ($data->contacts as $contact) {
-        if ($contact->{'type'} == 'local') {
+        if ($contact->{'type'} == 'local' && $contact->status == 1) {
           $locals[] = $contact;
         }
       }
@@ -68,8 +68,9 @@ function hid_profiles_checkins_render($subtype, $conf, $panel_args, $context = N
           $nid = str_replace('hrinfo:', '', $local->locationId);
           $link = l($local->location, 'node/'.$nid.'/hid_contacts');
           $edit = l('Edit', variable_get('hid_profiles_app_url', NULL).'/#/profile/'.$local->{'_id'});
+          $checkout = l('Checkout', 'hid/checkout/'.$local->{'_id'});
           
-          $cell = array($link, $edit);
+          $cell = array($link, $edit.' - '.$checkout);
           $rows[] = $cell;
         }
         $table = array('header' => $headers, 'rows' => $rows, 'attributes' => array());

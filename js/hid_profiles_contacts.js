@@ -55,7 +55,7 @@ Drupal.behaviors.hidProfilesContacts = {
 
         url: function() {
           var index = window.location.hash.indexOf('?');
-          var url = window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&type=local&limit=' + this.limit + '&skip=' + this.skip;
+          var url = window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&status=1&type=local&limit=' + this.limit + '&skip=' + this.skip;
           if (index != -1) {
             var params = window.location.hash.substr(index + 1);
             url += '&' + params;
@@ -117,7 +117,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'click #back': 'back',
           'autocompleteselect #organizations': 'filterByOrganization',
           'click #key-contact': 'filterByKeyContact',
-          'click #status': 'filterByStatus',
+          'click #verified': 'filterByVerified',
         },
 
         page: function(page) {
@@ -185,12 +185,12 @@ Drupal.behaviors.hidProfilesContacts = {
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },
  
-        filterByStatus: function(event) {
-          if ($('#status').prop('checked') == true) {
-            this.contactsList.params.status = true;
+        filterByVerified: function(event) {
+          if ($('#verified').prop('checked') == true) {
+            this.contactsList.params.verified = true;
           }
           else {
-            delete this.contactsList.params.status;
+            delete this.contactsList.params.verified;
           }
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },

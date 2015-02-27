@@ -259,3 +259,48 @@ function hid_profiles_local_contacts($operation) {
 
   return $html;
 }
+
+/**
+ * Callback for hid/checkout
+ */
+function hid_profiles_checkout($form, &$form_state, $cid) {
+  global $user;
+  $form['cid'] = array(
+    '#type' => 'hidden',
+    '#value' => $cid,
+  );
+  $data = hid_profiles_get_user_data($user->uid);
+  $location = '';
+  foreach ($data->contacts as $contact) {
+    if ($contact->{'_id'} == $cid) {
+      $location = $contact->location;
+    }
+  }
+  return confirm_form($form, t('Are you sure you want to checkout of @location ?', array('@location' => $location)), 'check-ins');
+}
+
+function hid_profiles_checkout_submit($form, &$form_state) {
+  global $user;
+  $cid = $form_state['values']['cid'];
+  // checkout from cid
+  $data = hid_profiles_get_user_data($user->uid);
+  $location = '';
+  foreach ($data->contacts as $contact) {
+    if ($contact->{'_id'} == $cid) {
+      $location = $contact->location;
+    }
+  }
+  $params = array(
+    '_id' => $cid,
+    '_profile' => $data->profile->{'_id'},
+    'status' => '0',
+  );
+  if (_hid_profiles_save_contact($data->profile->userid, $params) != FALSE) {
+    drupal_set_message('You have successfully checked out of '.$location);
+  }
+  else {
+    drupal_set_message('There was an error checking you out of '.$location, 'error');
+  }
+  $form_state['redirect'] = 'check-ins';
+}
+
