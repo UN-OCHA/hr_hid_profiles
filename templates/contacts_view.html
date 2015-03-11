@@ -6,7 +6,7 @@
           <div class="panel-panel-inner">
             <div class="panel-pane pane-node-title" >
               <div class="pane-content">
-                <h2><%= contact.get('nameGiven') %> <%= contact.get('nameFamily') %></h2>
+                <h2><%= contact.get('nameGiven') %> <%= contact.get('nameFamily') %> <% if(contact.get('_profile').verified == true) { %><i class="fa fa-check-circle"></i><% } %></h2>
               </div>
             </div>
             <div class="panel-separator"></div>
