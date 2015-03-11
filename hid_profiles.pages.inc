@@ -169,7 +169,7 @@ function hid_location_country($country) {
 
   foreach ($terms as $term) {
     if (in_array($country->tid, $term->parents)) {
-      if (!isset($countries['regions']['hrinfo_loc_' . $tid])) {
+      if (!isset($countries['regions']['hrinfo_loc_' . $term->tid])) {
         $countries['regions']['hrinfo_loc_' . $term->tid] = array(
           'name' => $term->name,
           'cities' => array(),
