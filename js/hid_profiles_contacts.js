@@ -156,13 +156,7 @@ Drupal.behaviors.hidProfilesContacts = {
           var previousPage = parseInt(this.currentPage) - 1;
           var count = this.contactsList.count;
           var itemsPerPage = this.numItems;
-          var paramsString = '';
-          _.each(this.contactsList.params, function(value, key, list) {
-            if (paramsString != '') {
-              paramsString += '&';
-            }
-            paramsString += key + '=' + value;
-          });
+          var paramsString = $.param(this.contactsList.params);
           if (paramsString != '') {
             paramsString = '?' + paramsString;
           }
