@@ -107,7 +107,6 @@ Drupal.behaviors.hidProfilesContacts = {
               var template = _.template($('#contacts_list_table_row').html());
               $('#contacts-list-table tbody').append(template({contacts: contacts.models}));
               that.finishedLoading();
-              $('.current-search-item .facetapi-active').html(that.contactsList.count + ' items');
             },
           });
         },
@@ -144,6 +143,33 @@ Drupal.behaviors.hidProfilesContacts = {
           $('#contacts-list').hide();
           $('#block-hid-profiles-hid-profiles-filters').hide();
         },
+
+        finishedLoading: function() {
+          $('#loading').hide();
+          this.show();
+          $('.current-search-item .facetapi-active').html(this.contactsList.count + ' items');
+          this.pager();
+        },
+
+        pager: function() {
+          var nextPage = parseInt(this.currentPage) + 1;
+          var previousPage = parseInt(this.currentPage) - 1;
+          var count = this.contactsList.count;
+          var itemsPerPage = this.numItems;
+          if (nextPage * itemsPerPage < count) {
+            $('#next').attr('href', '#table/' + nextPage);
+          }
+          else {
+            $('#next').attr('href', '#table/' + this.currentPage);
+          }
+          if (previousPage > 0) {
+            $('#previous').attr('href', '#table/' + previousPage);
+          }
+          else {
+            $('#previous').attr('href', '#table/' + this.currentPage);
+          }
+        },
+
 
         filterByProtectedRoles: function(event) {
           var val = $('#protectedRoles').val();
@@ -247,22 +273,6 @@ Drupal.behaviors.hidProfilesContacts = {
       table: function(page) {
         this.contactView.hide();
         this.tableView.page(page);
-        var nextPage = parseInt(page) + 1;
-        var previousPage = parseInt(page) - 1;
-        var count = this.tableView.contactsList.count;
-        var itemsPerPage = this.tableView.numItems;
-        if (nextPage * itemsPerPage < count / itemsPerPage) {
-          $('#next').attr('href', '#table/' + nextPage);
-        }
-        else {
-          $('#next').attr('href', '#table/' + page);
-        }
-        if (previousPage > 0) {
-          $('#previous').attr('href', '#table/' + previousPage);
-        }
-        else {
-          $('#previous').attr('href', '#table/' + page);
-        }
       },
 
       contact: function(id) {
