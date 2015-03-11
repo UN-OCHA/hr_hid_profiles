@@ -246,6 +246,7 @@ Drupal.behaviors.hidProfilesContacts = {
 
       table: function(page) {
         this.contactView.hide();
+        this.tableView.page(page);
         var nextPage = parseInt(page) + 1;
         var previousPage = parseInt(page) - 1;
         var count = this.tableView.contactsList.count;
@@ -262,7 +263,6 @@ Drupal.behaviors.hidProfilesContacts = {
         else {
           $('#previous').attr('href', '#table/' + page);
         }
-        this.tableView.page(page);
       },
 
       contact: function(id) {
