@@ -156,17 +156,27 @@ Drupal.behaviors.hidProfilesContacts = {
           var previousPage = parseInt(this.currentPage) - 1;
           var count = this.contactsList.count;
           var itemsPerPage = this.numItems;
-          if (nextPage * itemsPerPage < count) {
-            $('#next').attr('href', '#table/' + nextPage);
+          var paramsString = '';
+          _.each(this.contactsList.params, function(value, key, list) {
+            if (paramsString != '') {
+              paramsString += '&';
+            }
+            paramsString += key + '=' + value;
+          });
+          if (paramsString != '') {
+            paramsString = '?' + paramsString;
+          }
+          if (this.currentPage * itemsPerPage < count) {
+            $('#next').attr('href', '#table/' + nextPage + paramsString);
           }
           else {
-            $('#next').attr('href', '#table/' + this.currentPage);
+            $('#next').attr('href', '#table/' + this.currentPage + paramsString);
           }
           if (previousPage > 0) {
-            $('#previous').attr('href', '#table/' + previousPage);
+            $('#previous').attr('href', '#table/' + previousPage + paramsString);
           }
           else {
-            $('#previous').attr('href', '#table/' + this.currentPage);
+            $('#previous').attr('href', '#table/' + this.currentPage + paramsString);
           }
         },
 
@@ -291,7 +301,6 @@ Drupal.behaviors.hidProfilesContacts = {
       },
 
       navigateWithParams: function(url, params) {
-        console.log(params);
         this.navigate(url + '?' + $.param(params), {trigger: true});
       },
     });
