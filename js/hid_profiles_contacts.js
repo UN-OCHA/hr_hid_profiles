@@ -63,10 +63,12 @@ Drupal.behaviors.hidProfilesContacts = {
           return url;
         },
         parse: function(response) {
+           this.count = response.count;
            return response.contacts;
         },
         limit: 5,
         skip: 0,
+        count: 0,
     });
 
     ContactView = Backbone.View.extend({
@@ -105,6 +107,7 @@ Drupal.behaviors.hidProfilesContacts = {
               var template = _.template($('#contacts_list_table_row').html());
               $('#contacts-list-table tbody').append(template({contacts: contacts.models}));
               that.finishedLoading();
+              $('.current-search-item .facetapi-active').html(that.contactsList.count + ' items');
             },
           });
         },
@@ -245,9 +248,19 @@ Drupal.behaviors.hidProfilesContacts = {
         this.contactView.hide();
         var nextPage = parseInt(page) + 1;
         var previousPage = parseInt(page) - 1;
-        $('#next').attr('href', '#table/' + nextPage);
+        var count = this.tableView.contactsList.count;
+        var itemsPerPage = this.tableView.numItems;
+        if (nextPage * itemsPerPage < count / itemsPerPage) {
+          $('#next').attr('href', '#table/' + nextPage);
+        }
+        else {
+          $('#next').attr('href', '#table/' + page);
+        }
         if (previousPage > 0) {
           $('#previous').attr('href', '#table/' + previousPage);
+        }
+        else {
+          $('#previous').attr('href', '#table/' + page);
         }
         this.tableView.page(page);
       },
