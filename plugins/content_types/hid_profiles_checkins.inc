@@ -8,12 +8,6 @@ $plugin = array(
   'edit form' => 'hid_profiles_checkins_edit_form',
   'render callback' => 'hid_profiles_checkins_render',
   'defaults' => array(
-    'gid' => '',
-    'hno' => '',
-    'srp' => '',
-    'monr' => '',
-    'opr' => '',
-    'orp' => '',
   ),
 );
 

@@ -87,6 +87,11 @@ function hid_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
+  $items['hid/autocomplete'] = array(
+    'page callback' => 'hid_profiles_autocomplete_callback',
+    'access arguments' => array('access content'),
+  );
+
   $items['hid/checkout/%'] = array(
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hid_profiles_checkout', 2),
@@ -129,11 +134,32 @@ function hid_profiles_proxy() {
   }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
-    $return_data = json_decode($response->data);
     echo $response->data;
   }
   drupal_exit();
 }
+
+/**
+ * Callback function for autocomplete
+ */
+function hid_profiles_autocomplete_callback($string = '') {
+  $out = array();
+  $variables['query'] = array(
+    'type' => 'local',
+    'status' => 1,
+    'text' => $string,
+  );
+  $response = hid_profiles_restclient_post('v0/contact/view', $variables);
+  if ($response->code == "200") {
+    $return_data = json_decode($response->data);
+    if ($return_data->{'count'} > 0) {
+      foreach ($return_data->contacts as $contact) {
+        $out[$contact->{'_id'}] = $contact->nameGiven . ' ' . $contact->nameFamily.' ('.$contact->location.')';
+      }
+    }
+  }
+  drupal_json_output($out);
+} 
 
 /**
  * Implements hook_ctools_plugin_directory()
