@@ -606,6 +606,8 @@ function hid_profiles_restclient_post($resource_path, $variables = array()) {
   $variables['query']['_access_client_id'] = $key;
   $variables['query']['_access_key'] = $key_hash;
 
+  $variables['headers']['Content-Type'] = 'application/json';
+
   return restclient_post($resource_path, $variables);
 }
 
