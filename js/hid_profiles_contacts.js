@@ -107,9 +107,11 @@ Drupal.behaviors.hidProfilesContacts = {
               var template = _.template($('#contacts_list_table_row').html());
               var pdf_url = that.contactsList.url();
               pdf_url = pdf_url.replace('&limit=' + that.numItems + '&skip=' + that.contactsList.skip, '');
+              var csv_url = pdf_url + '&export=csv';
               pdf_url = pdf_url + '&export=pdf';
               $('#contacts-list-pdf').attr('href', pdf_url);
-              $('#contacts-list-table tbody').append(template({contacts: contacts.models, pdf_url: pdf_url}));
+              $('#contacts-list-csv').attr('href', csv_url);
+              $('#contacts-list-table tbody').append(template({contacts: contacts.models}));
               that.finishedLoading();
             },
           });

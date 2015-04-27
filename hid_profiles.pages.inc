@@ -237,6 +237,7 @@ function hid_profiles_local_contacts($operation) {
  </button>
  <ul class="dropdown-menu">
    <li><a id="contacts-list-pdf" href="#" target="_blank">PDF</a></li>
+   <li><a id="contacts-list-csv" href="#" target="_blank">CSV</a></li>
  </ul>
 </div>
 </div>
