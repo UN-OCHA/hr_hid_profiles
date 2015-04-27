@@ -231,7 +231,16 @@ function hid_profiles_local_contacts($operation) {
   drupal_add_js(drupal_get_path('module', 'hid_profiles') . '/js/hid_profiles_contacts.js');
   drupal_add_js(array('hid_profiles' => array('operation_id' => $operation->nid)), 'setting');
 
-  $html = '<div id="contacts-view">
+  $html = '<div class="feed-icon text-right"><div class="btn-group">
+ <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+   <i class="fa fa-download"></i> <span class="caret"></span>
+ </button>
+ <ul class="dropdown-menu">
+   <li><a id="contacts-list-pdf" href="#" target="_blank">PDF</a></li>
+ </ul>
+</div>
+</div>
+<div id="contacts-view">
 </div>
 <div id="contacts-list">
   <table id="contacts-list-table" class="table table-striped">

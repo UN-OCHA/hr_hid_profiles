@@ -105,7 +105,11 @@ Drupal.behaviors.hidProfilesContacts = {
           this.contactsList.fetch({ 
             success: function (contacts) {
               var template = _.template($('#contacts_list_table_row').html());
-              $('#contacts-list-table tbody').append(template({contacts: contacts.models}));
+              var pdf_url = that.contactsList.url();
+              pdf_url = pdf_url.replace('&limit=' + that.numItems + '&skip=' + that.contactsList.skip, '');
+              pdf_url = pdf_url + '&export=pdf';
+              $('#contacts-list-pdf').attr('href', pdf_url);
+              $('#contacts-list-table tbody').append(template({contacts: contacts.models, pdf_url: pdf_url}));
               that.finishedLoading();
             },
           });
@@ -137,11 +141,13 @@ Drupal.behaviors.hidProfilesContacts = {
         show: function() {
           $('#contacts-list').show();
           $('#block-hid-profiles-hid-profiles-filters').show();
+          $('.feed-icon').show();
         },
 
         hide: function() {
           $('#contacts-list').hide();
           $('#block-hid-profiles-hid-profiles-filters').hide();
+          $('.feed-icon').hide();
         },
 
         finishedLoading: function() {
