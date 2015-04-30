@@ -214,7 +214,7 @@ function hid_profiles_load_template($file, $id) {
  * @param integer Operation Id
  *
  */
-function hid_profiles_local_contacts($operation) {
+function hid_profiles_local_contacts($node) {
   $templates = array(
     'contacts_list_table_row',
     'contacts_view',
@@ -228,8 +228,17 @@ function hid_profiles_local_contacts($operation) {
     hid_profiles_load_template($template, $template);
   }
 
+  $settings = array(
+    'operation_id' => $node->nid,
+    'bundle' => '',
+  );
+  if ($node->type == 'hr_bundle') {
+    $settings['bundle'] = $node->title;
+    $settings['operation_id'] = _hr_bundles_get_operation($node->nid);
+  }
+
   drupal_add_js(drupal_get_path('module', 'hid_profiles') . '/js/hid_profiles_contacts.js');
-  drupal_add_js(array('hid_profiles' => array('operation_id' => $operation->nid)), 'setting');
+  drupal_add_js(array('hid_profiles' => $settings), 'setting');
 
   $html = '<div class="feed-icon text-right"><div class="btn-group">
  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">

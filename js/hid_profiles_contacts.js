@@ -56,6 +56,9 @@ Drupal.behaviors.hidProfilesContacts = {
         url: function() {
           var index = window.location.hash.indexOf('?');
           var url = window.location.protocol + '//' + window.location.host + '/hid/proxy?api_path=v0/contact/view&locationId=hrinfo:' + settings.hid_profiles.operation_id + '&status=1&type=local&limit=' + this.limit + '&skip=' + this.skip;
+          if (settings.hid_profiles.bundle != '') {
+            url += '&bundle=' + settings.hid_profiles.bundle;
+          }
           if (index != -1) {
             var params = window.location.hash.substr(index + 1);
             url += '&' + params;
