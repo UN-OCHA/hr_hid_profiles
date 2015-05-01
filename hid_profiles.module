@@ -706,6 +706,7 @@ function hid_profiles_bundles_select($operation) {
   $entities = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'hr_bundle')
     ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $operation, '=')
+    ->propertyOrderBy('title')
     ->execute();
   $nodes = node_load_multiple(array_keys($entities['node']));
   $html = '<div id="block-hid-profiles-filters-bundles" class="block"><select id="bundles" class="form-control form-select" tabindex="1" data-placeholder="Filter by Group">';
