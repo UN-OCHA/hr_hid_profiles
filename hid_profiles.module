@@ -713,7 +713,12 @@ function hid_profiles_bundles_select($operation) {
   $html .= '<option value=""></option>';
   foreach ($nodes as $node) {
     $label = entity_label('node', $node);
-    $html .= '<option value="'.$label.'">'.$label.'</option>';
+    if ($node->field_bundle_hid_access[LANGUAGE_NONE][0]['value'] == 'closed') {
+      $html .= '<option value="#'.$label.'">'.$label.'</option>';
+    }
+    else {
+      $html .= '<option value="#'.$label.'">'.$label.'</option>';
+    }
   }
   $html .= '</select></div>';
   return $html;
