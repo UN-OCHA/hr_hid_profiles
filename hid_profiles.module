@@ -717,7 +717,7 @@ function hid_profiles_bundles_select($operation) {
       $html .= '<option value="#'.$label.'">'.$label.'</option>';
     }
     else {
-      $html .= '<option value="#'.$label.'">'.$label.'</option>';
+      $html .= '<option value="'.$label.'">'.$label.'</option>';
     }
   }
   $html .= '</select></div>';
