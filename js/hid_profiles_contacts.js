@@ -200,7 +200,7 @@ Drupal.behaviors.hidProfilesContacts = {
         filterByBundles: function(event) {
           var val = $('#bundles').val();
           if (val != '') {
-            if (val.charAt(1) == '#') {
+            if (val.charAt(0) == '#') {
               this.contactsList.params.protectedBundles = val.substr(1);
             }
             else {
