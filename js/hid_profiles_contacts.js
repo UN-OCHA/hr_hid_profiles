@@ -131,6 +131,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'click #verified': 'filterByVerified',
           'change #countries': 'filterByCountry',
           'change #locations': 'filterByLocation',
+          'change #offices': 'filterByOffice',
         },
 
         page: function(page) {
@@ -245,6 +246,17 @@ Drupal.behaviors.hidProfilesContacts = {
           }
           else {
             delete this.contactsList.params.address_administrative_area;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+
+        filterByOffice: function(event) {
+          var val = $('#offices').val();
+          if (val != '') {
+            this.contactsList.params.office_name = val;
+          }
+          else {
+            delete this.contactsList.params.office_name;
           }
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },

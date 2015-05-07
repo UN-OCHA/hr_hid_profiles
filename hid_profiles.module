@@ -138,6 +138,9 @@ function hid_profiles_proxy() {
   if (isset($variables['query']['address_administrative_area'])) {
     $variables['query']['address.administrative_area'] = $variables['query']['address_administrative_area'];
   }
+  if (isset($variables['query']['office_name'])) {
+    $variables['query']['office.name'] = $variables['query']['office_name'];
+  }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
     if (isset($variables['query']['export'])) {
@@ -678,6 +681,7 @@ function hid_profiles_block_view($delta = '') {
       $block['content'] .= hid_profiles_organization_autocomplete();
       $block['content'] .= hid_profiles_country_select();
       $block['content'] .= hid_profiles_location_select(arg(1));
+      $block['content'] .= hid_profiles_office_select(arg(1));
       $block['content'] .= '<hr /><div style="font-size: 14px;" class="block"><span title="Key Contact" class="hid-key-contact">*</span> Key Contact <input type="checkbox" id="key-contact" name="keyContact" /> <br />';
       $block['content'] .= '<span title="Verified"><i class="fa fa-check-circle fa-lg"></i></span> Verified User <input type="checkbox" id="verified" name="verified" /><hr />';
       break;
@@ -759,6 +763,24 @@ function hid_profiles_location_select($operation_id) {
   $html .= '<option value=""></option>';
   foreach ($tree as $term) {
     $html .= '<option value="'.$term->name.'">'.$term->name.'</option>';
+  }
+  $html .= '</select></div>';
+  return $html;
+}
+
+function hid_profiles_office_select($operation) {
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'hr_office')
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $operation, '=')
+    ->propertyOrderBy('title')
+    ->execute();
+  $nodes = node_load_multiple(array_keys($entities['node']));
+  $html = '<div id="block-hid-profiles-filters-offices" class="block"><select id="offices" class="form-control form-select" tabindex="1" data-placeholder="Filter by Office">';
+  $html .= '<option value=""></option>';
+  foreach ($nodes as $node) {
+    $label = entity_label('node', $node);
+    $html .= '<option value="'.$label.'">'.$label.'</option>';
   }
   $html .= '</select></div>';
   return $html;
