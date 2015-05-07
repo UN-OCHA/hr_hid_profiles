@@ -132,6 +132,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'change #countries': 'filterByCountry',
           'change #locations': 'filterByLocation',
           'change #offices': 'filterByOffice',
+          'change #disasters': 'filterByDisaster',
         },
 
         page: function(page) {
@@ -257,6 +258,17 @@ Drupal.behaviors.hidProfilesContacts = {
           }
           else {
             delete this.contactsList.params.office_name;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+
+        filterByDisaster: function(event) {
+          var val = $('#disasters').val();
+          if (val != '') {
+            this.contactsList.params.disasters_remote_id = val;
+          }
+          else {
+            delete this.contactsList.params.disasters_remote_id;
           }
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },

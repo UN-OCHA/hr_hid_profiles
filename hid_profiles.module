@@ -141,6 +141,9 @@ function hid_profiles_proxy() {
   if (isset($variables['query']['office_name'])) {
     $variables['query']['office.name'] = $variables['query']['office_name'];
   }
+  if (isset($variables['query']['disasters_remote_id'])) {
+    $variables['query']['disasters.remote_id'] = $variables['query']['disasters_remote_id'];
+  }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
     if (isset($variables['query']['export'])) {
@@ -682,6 +685,7 @@ function hid_profiles_block_view($delta = '') {
       $block['content'] .= hid_profiles_country_select();
       $block['content'] .= hid_profiles_location_select(arg(1));
       $block['content'] .= hid_profiles_office_select(arg(1));
+      $block['content'] .= hid_profiles_disaster_select(arg(1));
       $block['content'] .= '<hr /><div style="font-size: 14px;" class="block"><span title="Key Contact" class="hid-key-contact">*</span> Key Contact <input type="checkbox" id="key-contact" name="keyContact" /> <br />';
       $block['content'] .= '<span title="Verified"><i class="fa fa-check-circle fa-lg"></i></span> Verified User <input type="checkbox" id="verified" name="verified" /><hr />';
       break;
@@ -781,6 +785,28 @@ function hid_profiles_office_select($operation) {
   foreach ($nodes as $node) {
     $label = entity_label('node', $node);
     $html .= '<option value="'.$label.'">'.$label.'</option>';
+  }
+  $html .= '</select></div>';
+  return $html;
+}
+
+function hid_profiles_disaster_select($operation) {
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'hr_disaster')
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $operation, '=')
+    ->propertyOrderBy('title')
+    ->execute();
+  $nodes = node_load_multiple(array_keys($entities['node']));
+  $html = '<div id="block-hid-profiles-filters-disasters" class="block"><select id="disasters" class="form-control form-select" tabindex="1" data-placeholder="Filter by Disaster">';
+  $html .= '<option value=""></option>';
+  foreach ($nodes as $node) {
+    $label = entity_label('node', $node);
+    $id = 'hrinfo:'.$node->nid;
+    if (!empty($node->field_reliefweb_id)) {
+      $id = 'rwint:'.$node->field_reliefweb_id[LANGUAGE_NONE][0]['value'];
+    }
+    $html .= '<option value="'.$id.'">'.$label.'</option>';
   }
   $html .= '</select></div>';
   return $html;
