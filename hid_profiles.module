@@ -670,6 +670,7 @@ function hid_profiles_block_view($delta = '') {
       $block['content'] .= hid_profiles_protected_roles_select();
       $block['content'] .= hid_profiles_bundles_select(arg(1));
       $block['content'] .= hid_profiles_organization_autocomplete();
+      $block['content'] .= hid_profiles_country_select();
       $block['content'] .= '<hr /><div style="font-size: 14px;" class="block"><span title="Key Contact" class="hid-key-contact">*</span> Key Contact <input type="checkbox" id="key-contact" name="keyContact" /> <br />';
       $block['content'] .= '<span title="Verified"><i class="fa fa-check-circle fa-lg"></i></span> Verified User <input type="checkbox" id="verified" name="verified" /><hr />';
       break;
@@ -719,6 +720,24 @@ function hid_profiles_bundles_select($operation) {
     else {
       $html .= '<option value="'.$label.'">'.$label.'</option>';
     }
+  }
+  $html .= '</select></div>';
+  return $html;
+}
+
+function hid_profiles_country_select() {
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'taxonomy_term')
+    ->entityCondition('bundle', 'hr_location')
+    ->fieldCondition('field_loc_admin_level', 'value', 0, '=')
+    ->propertyOrderBy('name')
+    ->execute();
+  $terms = taxonomy_term_load_multiple(array_keys($entities['taxonomy_term']));
+  $html = '<div id="block-hid-profiles-filters-countries" class="block"><select id="countries" class="form-control form-select" tabindex="1" data-placeholder="Filter by Country">';
+  $html .= '<option value=""></option>';
+  foreach ($terms as $term) {
+    $label = entity_label('taxonomy_term', $term);
+    $html .= '<option value="'.$label.'">'.$label.'</option>';
   }
   $html .= '</select></div>';
   return $html;

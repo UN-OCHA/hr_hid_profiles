@@ -129,6 +129,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'autocompleteselect #organizations': 'filterByOrganization',
           'click #key-contact': 'filterByKeyContact',
           'click #verified': 'filterByVerified',
+          'change #countries': 'filterByCountry',
         },
 
         page: function(page) {
@@ -225,6 +226,18 @@ Drupal.behaviors.hidProfilesContacts = {
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },
 
+        filterByCountry: function(event) {
+          var val = $('#countries').val();
+          if (val != '') {
+            this.contactsList.params.address = new Object();
+            this.contactsList.params.address.country = val;
+          }
+          else {
+            delete this.contactsList.params.address;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+
         filterByKeyContact: function(event) {
           if ($('#key-contact').prop('checked') == true) {
             this.contactsList.params.keyContact = true;
@@ -312,7 +325,15 @@ Drupal.behaviors.hidProfilesContacts = {
       },
 
       navigateWithParams: function(url, params) {
-        this.navigate(url + '?' + $.param(params), {trigger: true});
+        var extra = '';
+        if (params.address && params.address.country) {
+          extra += 'address.country=' + params.address.country;
+          delete params.address;
+          if (!$.isEmptyObject(params)) {
+            extra = '&' + extra;
+          }
+        }
+        this.navigate(url + '?' + $.param(params) + extra, {trigger: true});
       },
     });
 
