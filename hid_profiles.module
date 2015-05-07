@@ -135,6 +135,9 @@ function hid_profiles_proxy() {
   if (isset($variables['query']['address_country'])) {
     $variables['query']['address.country'] = $variables['query']['address_country'];
   }
+  if (isset($variables['query']['address_administrative_area'])) {
+    $variables['query']['address.administrative_area'] = $variables['query']['address_administrative_area'];
+  }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
     if (isset($variables['query']['export'])) {
@@ -674,6 +677,7 @@ function hid_profiles_block_view($delta = '') {
       $block['content'] .= hid_profiles_bundles_select(arg(1));
       $block['content'] .= hid_profiles_organization_autocomplete();
       $block['content'] .= hid_profiles_country_select();
+      $block['content'] .= hid_profiles_location_select(arg(1));
       $block['content'] .= '<hr /><div style="font-size: 14px;" class="block"><span title="Key Contact" class="hid-key-contact">*</span> Key Contact <input type="checkbox" id="key-contact" name="keyContact" /> <br />';
       $block['content'] .= '<span title="Verified"><i class="fa fa-check-circle fa-lg"></i></span> Verified User <input type="checkbox" id="verified" name="verified" /><hr />';
       break;
@@ -741,6 +745,20 @@ function hid_profiles_country_select() {
   foreach ($terms as $term) {
     $label = entity_label('taxonomy_term', $term);
     $html .= '<option value="'.$label.'">'.$label.'</option>';
+  }
+  $html .= '</select></div>';
+  return $html;
+}
+
+function hid_profiles_location_select($operation_id) {
+  $operation = node_load($operation_id);
+  $loc_vocabulary = taxonomy_vocabulary_machine_name_load('hr_location');
+  $parent = $operation->field_country[LANGUAGE_NONE][0]['target_id'];
+  $tree = taxonomy_get_tree($loc_vocabulary->vid, $parent, 1);
+  $html = '<div id="block-hid-profiles-filters-locations" class="block"><select id="locations" class="form-control form-select" tabindex="1" data-placeholder="Filter by Location">';
+  $html .= '<option value=""></option>';
+  foreach ($tree as $term) {
+    $html .= '<option value="'.$term->name.'">'.$term->name.'</option>';
   }
   $html .= '</select></div>';
   return $html;

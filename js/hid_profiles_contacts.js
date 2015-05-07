@@ -130,6 +130,7 @@ Drupal.behaviors.hidProfilesContacts = {
           'click #key-contact': 'filterByKeyContact',
           'click #verified': 'filterByVerified',
           'change #countries': 'filterByCountry',
+          'change #locations': 'filterByLocation',
         },
 
         page: function(page) {
@@ -233,6 +234,17 @@ Drupal.behaviors.hidProfilesContacts = {
           }
           else {
             delete this.contactsList.params.address_country;
+          }
+          this.router.navigateWithParams('table/1', this.contactsList.params);
+        },
+
+        filterByLocation: function(event) {
+          var val = $('#locations').val();
+          if (val != '') {
+            this.contactsList.params.address_administrative_area = val;
+          }
+          else {
+            delete this.contactsList.params.address_administrative_area;
           }
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },
