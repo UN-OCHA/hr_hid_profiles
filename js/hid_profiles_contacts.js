@@ -229,11 +229,10 @@ Drupal.behaviors.hidProfilesContacts = {
         filterByCountry: function(event) {
           var val = $('#countries').val();
           if (val != '') {
-            this.contactsList.params.address = new Object();
-            this.contactsList.params.address.country = val;
+            this.contactsList.params.address_country = val;
           }
           else {
-            delete this.contactsList.params.address;
+            delete this.contactsList.params.address_country;
           }
           this.router.navigateWithParams('table/1', this.contactsList.params);
         },
@@ -325,15 +324,7 @@ Drupal.behaviors.hidProfilesContacts = {
       },
 
       navigateWithParams: function(url, params) {
-        var extra = '';
-        if (params.address && params.address.country) {
-          extra += 'address.country=' + params.address.country;
-          delete params.address;
-          if (!$.isEmptyObject(params)) {
-            extra = '&' + extra;
-          }
-        }
-        this.navigate(url + '?' + $.param(params) + extra, {trigger: true});
+        this.navigate(url + '?' + $.param(params), {trigger: true});
       },
     });
 

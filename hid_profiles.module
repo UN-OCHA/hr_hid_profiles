@@ -132,6 +132,9 @@ function hid_profiles_proxy() {
   if (isset($variables['query']['organization_name'])) {
     $variables['query']['organization.name'] = $variables['query']['organization_name'];
   }
+  if (isset($variables['query']['address_country'])) {
+    $variables['query']['address.country'] = $variables['query']['address_country'];
+  }
   $response = hid_profiles_restclient_post($resource_path, $variables);
   if ($response->code === "200") {
     if (isset($variables['query']['export'])) {
