@@ -64,10 +64,13 @@ function hid_profiles_settings_form($form, &$form_state) {
  * @param string $org_names
  *  A keyword for searching Organization names.
  *
+ * @param boolean $extended
+ *  Option to return extended information about organizations.
+ *
  * @return
  *  JSON output of the matching Organizations array.
  */
-function hid_organizations_autocomplete($org_names) {
+function hid_organizations_autocomplete($org_names, $extended = FALSE) {
   $matches = array();
 
   // Get the vocabulary for the Organizations to limit the term query by VID.
@@ -84,10 +87,16 @@ function hid_organizations_autocomplete($org_names) {
   // organization field value match the given search string.
   $query = db_select('taxonomy_term_data', 't');
   $query->leftJoin('field_data_field_acronym', 'fdfa', '(t.tid = fdfa.entity_id AND fdfa.entity_type = :fdfa_type)', array(':fdfa_type' => 'taxonomy_term'));
+  $query->leftJoin('field_data_field_organization_type', 'fot', 't.tid = fot.entity_id');
+  $query->leftJoin('field_data_name_field', 'fnf', 'fot.field_organization_type_target_id = fnf.entity_id');
+
   $query
     ->fields('t')
     ->fields('fdfa')
-    ->condition('t.vid', $vocabulary->vid);
+    ->fields('fot')
+    ->fields('fnf')
+    ->condition('t.vid', $vocabulary->vid)
+    ->condition('fnf.language', 'en');
 
   $or = db_or();
   $or->condition('t.name', $contains_delimiter . db_like($org_names) . '%', 'LIKE');
@@ -101,10 +110,21 @@ function hid_organizations_autocomplete($org_names) {
   // add matches to $matches
   foreach ($return as $row) {
     $display_name = $row->name;
+    $org_type_id = $row->field_organization_type_target_id;
+    $org_type_name = $row->name_field_value;
     if (!empty($row->field_acronym_value)) {
       $display_name .= ' (' . $row->field_acronym_value . ')';
     }
-    $matches['hrinfo_org_' . $row->tid] = $display_name;
+    if ($extended) {
+      $matches['hrinfo_org_' . $row->tid] = array(
+        'name' => $display_name,
+        'org_type_id' => 'hrinfo_org_type_' . $org_type_id,
+        'org_type_name' => $org_type_name,
+      );
+    }
+    else {
+      $matches['hrinfo_org_' . $row->tid] = $display_name;
+    }
   }
 
   // return for JS
