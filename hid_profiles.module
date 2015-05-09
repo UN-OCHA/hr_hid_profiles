@@ -59,9 +59,18 @@ function hid_profiles_menu() {
     'access arguments' => array('access content'),
   );
 
-  // Provide callback for JSON objects of Organizations
+  // Provide callback for JSON objects of Organization names
   $items['hid/organizations/autocomplete'] = array(
     'page callback' => 'hid_organizations_autocomplete',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'hid_profiles.pages.inc',
+  );
+
+  // Provide callback for JSON objects of Organization extended data
+  $items['hid/organizations/extended/autocomplete'] = array(
+    'page callback' => 'hid_organizations_autocomplete',
+    'page arguments' => array(4, TRUE),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
     'file' => 'hid_profiles.pages.inc',
