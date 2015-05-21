@@ -103,7 +103,11 @@ function hid_profiles_list_render($subtype, $conf, $panel_args, $context = NULL)
           $block->content .= '&nbsp;&nbsp;&nbsp;'.$contact->organization[0]->{'name'}.'<br />';
           $block->content .= '&nbsp;&nbsp;&nbsp;'.$contact->jobtitle.'<br />';
           $block->content .= '&nbsp;&nbsp;&nbsp;'.$contact->email[0]->address.'<br />';
-          $block->content .= '&nbsp;&nbsp;&nbsp;'.$contact->phone[0]->number.'<br />';
+          if (!empty($contact->phone)) {
+            foreach ($contact->phone as $phone) {
+              $block->content .= '&nbsp;&nbsp;&nbsp;'.$phone->number.' ('.$phone->type.') '.'<br />';
+            }
+          }
           $block->content .= '</address>';
         }
       }
