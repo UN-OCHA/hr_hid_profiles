@@ -19,7 +19,7 @@ Drupal.behaviors.hidProfilesContacts = {
 
       getMainOrganizationName: function() {
         var organizations = this.get('organization');
-        if (organizations.length > 0) {
+        if (organizations.length > 0 && organizations[0] !== null) {
           return organizations[0].name;
         }
       },
